@@ -25,6 +25,5 @@ class Bird(pygame.sprite.Sprite):
                 self.tiempo_volando = 0
                 self.tiempo_cayendo = 0
             self.tiempo_cayendo += 1
-
         self.rect.y -= self.velocidad_y
 
