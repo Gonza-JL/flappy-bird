@@ -11,12 +11,20 @@ def iniciarPygame():
 def main():
     ventana = pygame.display.set_mode((ANCHO, ALTO))
     fps = pygame.time.Clock()
+    juegoFinalizado = False
 
     ave = Ave()
-    tuberia = Tuberia()
+    suelo = pygame.image.load("data/suelo.png").convert()
+    sueloY= ALTO-30
+    fondo = pygame.image.load("data/fondo.png").convert()
+    tuberiaSup = Tuberia("data/tuberia superior.png")
+    tuberiaInf = Tuberia("data/tuberia inferior.png")
+    tuberiaSup.rect.bottom = ALTO//2.55
+    tuberiaInf.rect.bottom = ALTO * 1.55
 
     sprites = pygame.sprite.Group()
-    sprites.add(tuberia)
+    sprites.add(tuberiaSup)
+    sprites.add(tuberiaInf)
     sprites.add(ave)
     
     gravedad = 0.9
@@ -29,21 +37,22 @@ def main():
                 sys.exit()
             if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
                 velocidadGravedad = ave.vuelo
-            
-        velocidadGravedad += gravedad
-        ave.rect.bottom += velocidadGravedad
+        
+        if(juegoFinalizado == False):
+            velocidadGravedad += gravedad
+            ave.rect.bottom += velocidadGravedad
 
-        if(ave.rect.bottom >= ALTO):
-            ave.rect.bottom = ALTO
-            gravedad = 0
-        elif(ave.rect.bottom <= 0):
-            ave.rect.bottom = 0
-            gravedad = 0
+            if(ave.rect.bottom >= sueloY + 5):
+                ave.rect.bottom = sueloY + 5
+                juegoFinalizado = True
+            elif(ave.rect.bottom <= 0):
+                juegoFinalizado = True
 
-        sprites.update()
-        ventana.fill(COLOR_NEGRO)
-        sprites.draw(ventana)
-        pygame.display.flip()
+            sprites.update()
+            ventana.blit(fondo, [0, 0])
+            sprites.draw(ventana)
+            ventana.blit(suelo, [0, sueloY])
+            pygame.display.flip()
 
 if __name__ == "__main__":
     iniciarPygame()
