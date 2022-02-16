@@ -14,17 +14,15 @@ def main():
     juegoFinalizado = False
 
     ave = Ave()
-    suelo = pygame.image.load("data/suelo.png").convert()
     sueloY= ALTO-30
+    suelo = pygame.image.load("data/suelo.png").convert()
     fondo = pygame.image.load("data/fondo.png").convert()
-    tuberiaSup = Tuberia("data/tuberia superior.png")
-    tuberiaInf = Tuberia("data/tuberia inferior.png")
-    tuberiaSup.rect.bottom = ALTO//2.55
-    tuberiaInf.rect.bottom = ALTO * 1.55
+    tuberias = inicializarTuberias()
+    # MIN -150 MAX 150
 
     sprites = pygame.sprite.Group()
-    sprites.add(tuberiaSup)
-    sprites.add(tuberiaInf)
+    for i in range(tuberias.__len__()):
+        sprites.add(tuberias[i])
     sprites.add(ave)
     
     gravedad = 0.9
@@ -42,6 +40,9 @@ def main():
             velocidadGravedad += gravedad
             ave.rect.bottom += velocidadGravedad
 
+            for i in range(tuberias.__len__()):
+                tuberias[i].movimiento()
+
             if(ave.rect.bottom >= sueloY + 5):
                 ave.rect.bottom = sueloY + 5
                 juegoFinalizado = True
@@ -53,6 +54,20 @@ def main():
             sprites.draw(ventana)
             ventana.blit(suelo, [0, sueloY])
             pygame.display.flip()
+
+def inicializarTuberias():
+    tuberias = []
+    for i in range(0, 4, 2):
+        tuberias.append(Tuberia("data/tuberia superior.png"))
+        tuberias.append(Tuberia("data/tuberia inferior.png"))
+        tuberias[i].rect.bottom = ALTO//2.55
+        tuberias[i+1].rect.bottom = ALTO * 1.55
+        tuberias[i].rect.centerx += i * 150
+        tuberias[i+1].rect.centerx += i * 150
+        #if(i != 0):
+            #tuberias[i].rect.bottom += 
+            #tuberias[i+1].rect.bottom += 
+    return tuberias
 
 if __name__ == "__main__":
     iniciarPygame()
