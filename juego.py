@@ -18,7 +18,6 @@ def main():
     suelo = pygame.image.load("data/suelo.png").convert()
     fondo = pygame.image.load("data/fondo.png").convert()
     tuberias = inicializarTuberias()
-    # MIN -150 MAX 150
 
     sprites = pygame.sprite.Group()
     for i in range(tuberias.__len__()):
@@ -40,19 +39,33 @@ def main():
             velocidadGravedad += gravedad
             ave.rect.bottom += velocidadGravedad
 
+            # Simula el movimiento del ave
             for i in range(tuberias.__len__()):
                 tuberias[i].movimiento()
 
-            if(ave.rect.bottom >= sueloY + 5):
-                ave.rect.bottom = sueloY + 5
-                juegoFinalizado = True
+            # Mueve en el eje Y, al azar, a las tuberias
+            for i in range(0, tuberias.__len__(), 2):
+                if(tuberias[i].rect.centerx < -100):
+                    randomSup = random.randint(85, 385)
+                    randomInf = randomSup + 695
+                    tuberias[i].rect.bottom = randomSup
+                    tuberias[i+1].rect.bottom = randomInf
+
+            # Verifica si el ave choco con el suelo o si salio de la pantalla
+            if(ave.rect.bottom >= sueloY):
+                ave.rect.bottom = sueloY
+                juegoFinalizado = True 
             elif(ave.rect.bottom <= 0):
                 juegoFinalizado = True
 
+            for i in range(tuberias.__len__()):
+                if(ave.colisionConTuberia(tuberias[i])):
+                    juegoFinalizado = True
+
             sprites.update()
-            ventana.blit(fondo, [0, 0])
-            sprites.draw(ventana)
-            ventana.blit(suelo, [0, sueloY])
+            ventana.blit(fondo, [0, 0]) # Dibuja el fondo
+            sprites.draw(ventana) # Dibuja los sprites
+            ventana.blit(suelo, [0, sueloY]) # Dibuja el suelo
             pygame.display.flip()
 
 def inicializarTuberias():
@@ -60,13 +73,10 @@ def inicializarTuberias():
     for i in range(0, 4, 2):
         tuberias.append(Tuberia("data/tuberia superior.png"))
         tuberias.append(Tuberia("data/tuberia inferior.png"))
-        tuberias[i].rect.bottom = ALTO//2.55
-        tuberias[i+1].rect.bottom = ALTO * 1.55
+        tuberias[i].rect.bottom = ALTO//2.55 #235
+        tuberias[i+1].rect.bottom = ALTO * 1.55 #930
         tuberias[i].rect.centerx += i * 150
         tuberias[i+1].rect.centerx += i * 150
-        #if(i != 0):
-            #tuberias[i].rect.bottom += 
-            #tuberias[i+1].rect.bottom += 
     return tuberias
 
 if __name__ == "__main__":

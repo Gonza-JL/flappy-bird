@@ -1,5 +1,5 @@
+import pygame, random
 from cmath import rect
-import pygame
 from configuracion import *
 
 class Tuberia(pygame.sprite.Sprite):

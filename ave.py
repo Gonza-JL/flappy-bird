@@ -1,3 +1,4 @@
+from operator import truediv
 import pygame
 from configuracion import *
 
@@ -10,3 +11,9 @@ class Ave(pygame.sprite.Sprite):
         self.rect.centerx = ANCHO//3
         self.rect.bottom = ALTO//2
         self.vuelo = -10
+
+    def colisionConTuberia(self, tuberia):
+        if(self.rect.right - 20 >= tuberia.rect.left and self.rect.left <= tuberia.rect.right and
+            self.rect.bottom - 2 >= tuberia.rect.y and self.rect.y + 20 <= tuberia.rect.bottom):
+            return True
+        return False
