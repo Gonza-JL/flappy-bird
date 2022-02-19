@@ -1,3 +1,4 @@
+from time import sleep
 import pygame, sys, random
 from ave import *
 from tuberia import *
@@ -6,14 +7,19 @@ from suelo import *
 from configuracion import *
 
 def iniciarPygame():
-    pygame.init
+    pygame.init()
+    pygame.font.init()
     pygame.mixer.init()
     pygame.display.set_caption("Flappy bird")
     
 def main():
     ventana = pygame.display.set_mode((ANCHO, ALTO))
     fps = pygame.time.Clock()
+    fuente = pygame.font.Font("data/Flappy-Bird.ttf", 40)
     juegoFinalizado = False
+    gravedad = 0.9
+    velocidadGravedad = 0
+    puntaje = 0
 
     ave = Ave()
     fondo = [Fondo(0), Fondo(ANCHO)]
@@ -27,9 +33,6 @@ def main():
     sprites.add(suelo)
     sprites.add(ave)
     
-    gravedad = 0.9
-    velocidadGravedad = 0
-
     while(True):
         fps.tick(60)
         for event in pygame.event.get():
@@ -41,6 +44,14 @@ def main():
         if(juegoFinalizado == False):
             velocidadGravedad += gravedad
             ave.rect.bottom += velocidadGravedad
+
+            # Muestra por pantalla el puntaje
+            texto = fuente.render(str(int(puntaje)), True, COLOR_BLANCO)
+
+            # Suma 1 punto cuando el ave pasa una tuberia
+            for i in range(tuberias.__len__()):
+                if(ave.rect.right == tuberias[i].rect.right):
+                    puntaje += 0.5
 
             # Simula el movimiento del ave
             for i in range(tuberias.__len__()):
@@ -73,6 +84,7 @@ def main():
             
             sprites.update()
             sprites.draw(ventana)
+            ventana.blit(texto, [10, 10])
             pygame.display.flip()
 
 def inicializarTuberias():
