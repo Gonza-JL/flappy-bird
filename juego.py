@@ -1,6 +1,8 @@
 import pygame, sys, random
 from ave import *
 from tuberia import *
+from fondo import *
+from suelo import *
 from configuracion import *
 
 def iniciarPygame():
@@ -14,14 +16,15 @@ def main():
     juegoFinalizado = False
 
     ave = Ave()
-    sueloY= ALTO-30
-    suelo = pygame.image.load("data/suelo.png").convert()
-    fondo = pygame.image.load("data/fondo.png").convert()
+    fondo = [Fondo(0), Fondo(ANCHO)]
+    suelo = [Suelo(0), Suelo(ANCHO)]
     tuberias = inicializarTuberias()
 
     sprites = pygame.sprite.Group()
+    sprites.add(fondo)
     for i in range(tuberias.__len__()):
         sprites.add(tuberias[i])
+    sprites.add(suelo)
     sprites.add(ave)
     
     gravedad = 0.9
@@ -52,20 +55,24 @@ def main():
                     tuberias[i+1].rect.bottom = randomInf
 
             # Verifica si el ave choco con el suelo o si salio de la pantalla
-            if(ave.rect.bottom >= sueloY):
-                ave.rect.bottom = sueloY
-                juegoFinalizado = True 
-            elif(ave.rect.bottom <= 0):
+            for i in range(suelo.__len__()):
+                if(ave.rect.bottom >= suelo[i].rect.y):
+                    ave.rect.bottom = suelo[i].rect.y
+                    juegoFinalizado = True 
+            if(ave.rect.bottom <= 0):
                 juegoFinalizado = True
 
+            # Verifica si el ave choco con alguna tuberia
             for i in range(tuberias.__len__()):
                 if(ave.colisionConTuberia(tuberias[i])):
                     juegoFinalizado = True
 
+            # Mover fondo y suelo
+            moverListSprites(fondo)
+            moverListSprites(suelo)
+            
             sprites.update()
-            ventana.blit(fondo, [0, 0]) # Dibuja el fondo
-            sprites.draw(ventana) # Dibuja los sprites
-            ventana.blit(suelo, [0, sueloY]) # Dibuja el suelo
+            sprites.draw(ventana)
             pygame.display.flip()
 
 def inicializarTuberias():
@@ -78,6 +85,13 @@ def inicializarTuberias():
         tuberias[i].rect.centerx += i * 150
         tuberias[i+1].rect.centerx += i * 150
     return tuberias
+
+def moverListSprites(list):
+    for i in range(list.__len__()):
+        if(list[i].rect.x + list[i].rect.width <= 0):
+            list[i].rect.x = ANCHO-4
+        else:
+            list[i].rect.x -= VELOCIDAD_CAMARA
 
 if __name__ == "__main__":
     iniciarPygame()

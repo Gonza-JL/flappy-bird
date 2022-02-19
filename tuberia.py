@@ -13,4 +13,4 @@ class Tuberia(pygame.sprite.Sprite):
     def movimiento(self):
         if(self.rect.centerx < -100):
             self.rect.centerx = ANCHO + 100
-        self.rect.centerx -= 4
+        self.rect.centerx -= VELOCIDAD_CAMARA

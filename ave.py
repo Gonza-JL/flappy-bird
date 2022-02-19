@@ -14,6 +14,6 @@ class Ave(pygame.sprite.Sprite):
 
     def colisionConTuberia(self, tuberia):
         if(self.rect.right - 20 >= tuberia.rect.left and self.rect.left <= tuberia.rect.right and
-            self.rect.bottom - 2 >= tuberia.rect.y and self.rect.y + 20 <= tuberia.rect.bottom):
+        self.rect.bottom - 2 >= tuberia.rect.y and self.rect.y + 20 <= tuberia.rect.bottom):
             return True
         return False
