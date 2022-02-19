@@ -26,6 +26,7 @@ def main():
     suelo = [Suelo(0), Suelo(ANCHO)]
     tuberias = inicializarTuberias()
 
+    # Agrego los sprites
     sprites = pygame.sprite.Group()
     sprites.add(fondo)
     for i in range(tuberias.__len__()):
@@ -40,12 +41,13 @@ def main():
                 sys.exit()
             if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
                 velocidadGravedad = ave.vuelo
+                ave.image = pygame.image.load("data/ave2.png")
         
-        if(juegoFinalizado == False):
+        if(not juegoFinalizado):
             velocidadGravedad += gravedad
             ave.rect.bottom += velocidadGravedad
 
-            # Muestra por pantalla el puntaje
+            # Actualizo el puntaje a mostrar
             texto = fuente.render(str(int(puntaje)), True, COLOR_BLANCO)
 
             # Suma 1 punto cuando el ave pasa una tuberia
@@ -81,10 +83,11 @@ def main():
             # Mover fondo y suelo
             moverListSprites(fondo)
             moverListSprites(suelo)
-            
+
+            ave.actualizar()
             sprites.update()
-            sprites.draw(ventana)
-            ventana.blit(texto, [10, 10])
+            sprites.draw(ventana) # Dibuja los sprites
+            ventana.blit(texto, [10, 10]) # Dibuja el puntaje
             pygame.display.flip()
 
 def inicializarTuberias():
