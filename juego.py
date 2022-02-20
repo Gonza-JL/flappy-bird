@@ -1,4 +1,3 @@
-from time import sleep
 import pygame, sys, random
 from ave import *
 from tuberia import *

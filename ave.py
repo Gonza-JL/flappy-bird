@@ -15,13 +15,13 @@ class Ave(pygame.sprite.Sprite):
 
     def actualizar(self):
         if(self.image.__eq__(pygame.image.load("data/ave2.png"))):
-                self.tiempoImagen += 1
+            self.tiempoImagen += 1
         if(self.tiempoImagen > 20):
             self.image = pygame.image.load("data/ave.png")
             self.tiempoImagen = 0
 
     def colisionConTuberia(self, tuberia):
-        if(self.rect.right - 20 >= tuberia.rect.left and self.rect.left <= tuberia.rect.right and
+        if(self.rect.right - 20 >= tuberia.rect.left and self.rect.left + 20 <= tuberia.rect.right and
         self.rect.bottom - 2 >= tuberia.rect.y and self.rect.y + 20 <= tuberia.rect.bottom):
             return True
         return False
