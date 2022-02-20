@@ -40,7 +40,6 @@ def main():
                 sys.exit()
             if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
                 velocidadGravedad = ave.vuelo
-                #ave.image = pygame.image.load("data/ave2.png")
         
         if(not juegoFinalizado):
             velocidadGravedad += gravedad
