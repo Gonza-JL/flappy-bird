@@ -14,7 +14,8 @@ def iniciarPygame():
 def main():
     ventana = pygame.display.set_mode((ANCHO, ALTO))
     fps = pygame.time.Clock()
-    fuente = pygame.font.Font("data/Flappy-Bird.ttf", 40)
+    fuente = pygame.font.Font("data/fuente.ttf", 30)
+    fuente2 = pygame.font.Font("data/fuente.ttf", 40)
     juegoFinalizado = False
     gravedad = 0.9
     velocidadGravedad = 0
@@ -42,11 +43,15 @@ def main():
                 velocidadGravedad = ave.vuelo
         
         if(not juegoFinalizado):
+
+            # Actualiza la gravedad y el vuelo del ave
             velocidadGravedad += gravedad
             ave.rect.bottom += velocidadGravedad
+            ave.actualizar()
 
-            # Actualizo el puntaje a mostrar
-            texto = fuente.render(str(int(puntaje)), True, COLOR_BLANCO)
+            # Actualiza el puntaje a mostrar y el mensaje de game over
+            puntajeTXT = fuente.render(str(int(puntaje)), True, COLOR_BLANCO)
+            gameOver = fuente2.render("Game Over", True, COLOR_BLANCO)
 
             # Suma 1 punto cuando el ave pasa una tuberia
             for i in range(tuberias.__len__()):
@@ -82,11 +87,15 @@ def main():
             moverListSprites(fondo)
             moverListSprites(suelo)
 
-            ave.actualizar()
             sprites.update()
             sprites.draw(ventana) # Dibuja los sprites
-            ventana.blit(texto, [10, 10]) # Dibuja el puntaje
-            pygame.display.flip()
+            ventana.blit(puntajeTXT, [10, 2]) # Dibuja el puntaje
+        else:
+            # Dibuja el mensaje de game over
+            pygame.draw.rect(ventana, COLOR_NEGRO, [0, ALTO/3, ANCHO, 50], 0)
+            ventana.blit(gameOver, [30, ALTO/3])
+        pygame.display.flip()
+
 
 def inicializarTuberias():
     tuberias = []
