@@ -7,16 +7,18 @@ from configuracion import *
 
 class Juego():
     def __init__(self):
-        self.fps = pygame.time.Clock()
-        self.fuente = pygame.font.Font("data/fuente.ttf", 30)
-        self.fuente2 = pygame.font.Font("data/fuente.ttf", 40)
         self.finalizado = False
         self.gravedad = 0.9
         self.velocidadGravedad = 0
         self.puntaje = 0
+        self.repSonidoGameOver = 0
         self.ave = Ave()
+
+        # Inicializa listas de fondo y suelo
         self.fondo = [Fondo(0), Fondo(ANCHO)]
         self.suelo = [Suelo(0), Suelo(ANCHO)]
+        
+        # Inicializa las tuberias
         tuberias = []
         for i in range(0, 4, 2):
             tuberias.append(Tuberia("data/tuberia superior.png"))
@@ -27,32 +29,32 @@ class Juego():
             tuberias[i+1].rect.centerx += i * 150
         self.tuberias = tuberias
 
-        # Agrego los sprites
+        # Agrega los sprites
         self.sprites = pygame.sprite.Group()
         self.sprites.add(self.fondo)
         for i in range(self.tuberias.__len__()):
             self.sprites.add(self.tuberias[i])
             self.sprites.add(self.suelo)
             self.sprites.add(self.ave)
-
-def iniciarPygame():
+    
+def main():
     pygame.init()
     pygame.font.init()
     pygame.mixer.init()
     pygame.display.set_caption("Flappy bird")
-    
-def main():
-    iniciarPygame()
+
     ventana = pygame.display.set_mode((ANCHO, ALTO))
+    fps = pygame.time.Clock()
     juego = Juego()
     
     while(True):
-        juego.fps.tick(60)
+        fps.tick(60)
         for event in pygame.event.get():
             if(event.type == pygame.QUIT):
                 sys.exit()
-            if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+            if(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not juego.finalizado):
                 juego.velocidadGravedad = juego.ave.vuelo
+                SONIDO_AVE.play()
             elif(event.type == pygame.KEYDOWN and event.key == pygame.K_r and juego.finalizado):
                 juego = Juego()
         
@@ -64,15 +66,16 @@ def main():
             juego.ave.actualizar()
 
             # Actualiza el puntaje a mostrar y el mensaje de game over
-            puntajeTXT = juego.fuente.render(str(int(juego.puntaje)), True, COLOR_BLANCO)
-            gameOver = juego.fuente2.render("Game Over", True, COLOR_BLANCO)
-            reinicioTXT = juego.fuente.render("presione R para", True, COLOR_BLANCO)
-            reinicioTXT2 = juego.fuente.render("volver a jugar", True, COLOR_BLANCO)
+            puntajeTXT = FUENTE_MEDIANA.render(str(int(juego.puntaje)), True, COLOR_BLANCO)
+            gameOver = FUENTE_GRANDE.render("Game Over", True, COLOR_BLANCO)
+            reinicioTXT = FUENTE_MEDIANA.render("presione R para", True, COLOR_BLANCO)
+            reinicioTXT2 = FUENTE_MEDIANA.render("volver a jugar", True, COLOR_BLANCO)
 
             # Suma 1 punto cuando el ave pasa una tuberia
             for i in range(juego.tuberias.__len__()):
                 if(juego.ave.rect.right == juego.tuberias[i].rect.right):
                     juego.puntaje += 0.5
+                    SONIDO_PUNTAJE.play()
 
             # Simula el movimiento del ave
             for i in range(juego.tuberias.__len__()):
@@ -107,6 +110,11 @@ def main():
             juego.sprites.draw(ventana) # Dibuja los sprites
             ventana.blit(puntajeTXT, [10, 2]) # Dibuja el puntaje
         else:
+            # Reproduce el sonido de game over
+            if(juego.repSonidoGameOver == 0):
+                SONIDO_GAMEOVER.play()
+                juego.repSonidoGameOver += 1
+
             # Dibuja el mensaje de game over
             pygame.draw.rect(ventana, COLOR_NEGRO, [0, ALTO/3, ANCHO, 120], 0)
             ventana.blit(gameOver, [30, ALTO/3])
